@@ -143,7 +143,7 @@ namespace runplus
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            this.KeyPreview = true;
             string currdir = ShellHelper.GetStartMenu();
             //this.listView1.Items.Add(path);
             DirectoryInfo di = new DirectoryInfo(currdir);
@@ -156,7 +156,8 @@ namespace runplus
                     ht.Add(filename, fullfilename);
             }
             doRefresh("");
-            this.Visible = false;
+            
+            
         }
 
         private void listView1_DoubleClick(object sender, EventArgs e)
@@ -175,6 +176,24 @@ namespace runplus
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Hotkey.UnRegist(this.Handle, Test);
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            this.textBox1.Focus();
+        }
+
+        private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                this.Visible = false;
+            }
         }
     }
 }
