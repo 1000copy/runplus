@@ -30,6 +30,8 @@ namespace runplus
             Hotkey.Regist(this.Handle, HotkeyModifiers.MOD_WIN, Keys.Space, Test);
             this.ControlBox = false;
             this.ShowInTaskbar = false;
+            this.listView1.HideSelection = false;
+            this.listView1.MultiSelect = false;
         }
         void Test()
         {
@@ -112,14 +114,30 @@ namespace runplus
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (this.listView1.Items.Count == 0) return;
             if (e.KeyCode == Keys.Enter)
             {
                 if (this.listView1.Items.Count > 0)
                 {
-                    string Path2Link = this.listView1.Items[0].SubItems[1].Text;
+                    string Path2Link = "";
+                    if (this.listView1.SelectedIndices.Count == 0)
+                    {
+                       Path2Link = this.listView1.Items[0].SubItems[1].Text;
+                        
+                    }else
+                        Path2Link = this.listView1.Items[this.listView1.SelectedIndices[0]].SubItems[1].Text;
                     Process.Start(Path2Link);
                     this.Visible = false;
                 }
+            }
+            else if (e.KeyCode == Keys.Up || e.KeyCode ==Keys.Down)
+            {
+                if (this.listView1.SelectedIndices.Count == 0 )
+                    this.listView1.SelectedIndices.Add(0);
+                int newindex = e.KeyCode == Keys.Up ? this.listView1.SelectedIndices[0] - 1 : this.listView1.SelectedIndices[0] + 1;
+                if (newindex >=0 && newindex <= this.listView1.Items.Count -1)
+                    this.listView1.SelectedIndices.Add(newindex);
+
             }
         }
 
