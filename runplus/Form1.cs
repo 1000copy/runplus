@@ -37,6 +37,7 @@ namespace runplus
             this.StartPosition = FormStartPosition.CenterScreen;
             this.ControlBox = true;
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            this.timer1.Enabled = false;
         }
         void Test()
         {
