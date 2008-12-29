@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
+using System.Runtime.InteropServices;
 
 
 namespace runplus
@@ -32,6 +34,9 @@ namespace runplus
             this.ShowInTaskbar = false;
             this.listView1.HideSelection = false;
             this.listView1.MultiSelect = false;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.ControlBox = true;
+            this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
         }
         void Test()
         {
@@ -41,6 +46,7 @@ namespace runplus
             if (this.Visible)
             {
                 ShellHelper.SwitchToThisWindow(this.Handle, true);
+                //this.Opacity = ;
                 this.textBox1.Focus();
             }
         }
@@ -157,7 +163,6 @@ namespace runplus
             }
             doRefresh("");
             
-            
         }
 
         private void listView1_DoubleClick(object sender, EventArgs e)
@@ -181,6 +186,9 @@ namespace runplus
         private void Form1_Shown(object sender, EventArgs e)
         {
             this.textBox1.Focus();
+            //AnimateWindow(this.Handle, 1000, AW_CENTER | AW_ACTIVATE | AW_BLEND);
+
+
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -192,8 +200,31 @@ namespace runplus
         {
             if (e.KeyCode == Keys.Escape)
             {
+                for (int i = 1; i < 5; i++)
+                {
+                    Application.DoEvents();
+                    this.Opacity = i*20/10.0;
+                }
                 this.Visible = false;
             }
+        }
+        private bool direction = true;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (this.Opacity > .98) 
+                direction = false;
+            if (this.Opacity < 0.80)
+                direction = true;
+
+            if ( direction )
+            {
+                this.Opacity += 0.02;
+            }
+            else 
+            {
+                this.Opacity -= 0.02;
+            }
+
         }
     }
 }
