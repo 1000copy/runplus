@@ -1,6 +1,6 @@
 ﻿namespace runplus
 {
-    partial class Form1
+    partial class fmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -29,42 +29,42 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.lvLinks = new System.Windows.Forms.ListView();
+            this.edQuery = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.btnViewKeywords = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // listView1
+            // lvLinks
             // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.lvLinks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 77);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(245, 147);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-            this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
-            this.listView1.Click += new System.EventHandler(this.listView1_Click);
+            this.lvLinks.HideSelection = false;
+            this.lvLinks.Location = new System.Drawing.Point(12, 56);
+            this.lvLinks.Name = "lvLinks";
+            this.lvLinks.Size = new System.Drawing.Size(245, 99);
+            this.lvLinks.TabIndex = 0;
+            this.lvLinks.UseCompatibleStateImageBehavior = false;
+            this.lvLinks.SelectedIndexChanged += new System.EventHandler(this.lvLinks_SelectedIndexChanged);
+            this.lvLinks.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
             // 
-            // textBox1
+            // edQuery
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 50);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(245, 21);
-            this.textBox1.TabIndex = 5;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
+            this.edQuery.Location = new System.Drawing.Point(12, 33);
+            this.edQuery.Name = "edQuery";
+            this.edQuery.Size = new System.Drawing.Size(245, 21);
+            this.edQuery.TabIndex = 5;
+            this.edQuery.TextChanged += new System.EventHandler(this.edQuery_Changed);
+            this.edQuery.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(102, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(112, -1);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(53, 41);
+            this.pictureBox1.Size = new System.Drawing.Size(39, 33);
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
             // 
@@ -74,22 +74,33 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // Form1
+            // btnViewKeywords
+            // 
+            this.btnViewKeywords.Location = new System.Drawing.Point(226, 4);
+            this.btnViewKeywords.Name = "btnViewKeywords";
+            this.btnViewKeywords.Size = new System.Drawing.Size(35, 23);
+            this.btnViewKeywords.TabIndex = 7;
+            this.btnViewKeywords.Text = "Keywords";
+            this.btnViewKeywords.UseVisualStyleBackColor = true;
+            this.btnViewKeywords.Click += new System.EventHandler(this.btnViewKeywords_Click);
+            // 
+            // fmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(273, 239);
+            this.ClientSize = new System.Drawing.Size(273, 158);
+            this.Controls.Add(this.btnViewKeywords);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.edQuery);
+            this.Controls.Add(this.lvLinks);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Form1";
+            this.Name = "fmMain";
             this.Opacity = 0.9;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "fmMain";
             this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
@@ -104,10 +115,11 @@
 
         #endregion
 
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ListView lvLinks;
+        private System.Windows.Forms.TextBox edQuery;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button btnViewKeywords;
     }
 }
 

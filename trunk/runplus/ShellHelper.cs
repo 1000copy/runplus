@@ -23,7 +23,7 @@ namespace runplus
         /// <param name="fsModifiers">组合键</param> 
         /// <param name="vk">快捷键的虚拟键码</param> 
         /// <param name="callBack">回调函数</param> 
-        public static void Regist(IntPtr hWnd, HotkeyModifiers fsModifiers, Keys vk, HotKeyCallBackHanlder callBack)
+        public static void Register(IntPtr hWnd, HotkeyModifiers fsModifiers, Keys vk, HotKeyCallBackHanlder callBack)
         {
             int id = keyid++;
             if (!RegisterHotKey(hWnd, id, fsModifiers, vk))

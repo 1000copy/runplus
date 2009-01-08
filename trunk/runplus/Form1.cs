@@ -15,40 +15,41 @@ using System.Runtime.InteropServices;
 namespace runplus
 {
 
-    public partial class Form1 : Form
+    public partial class fmMain : Form
     {
-        public Form1()
+        private RunLinks links = new RunLinks();
+        public fmMain()
         {
             InitializeComponent();
-            this.listView1.View = View.Details;
+            this.lvLinks.View = View.Details;
             //this.listView1.Dock = DockStyle.Bottom;
 
-            this.listView1.Columns.Add("name");
-            this.listView1.Columns[0].Width = 200;
-            this.listView1.Columns.Add("fullname");
-            this.listView1.Columns[1].Width = 300;
-            this.listView1.Columns[1].Width = 0;
+            this.lvLinks.Columns.Add("name");
+            this.lvLinks.Columns[0].Width = 200;
+            this.lvLinks.Columns.Add("fullname");
+            this.lvLinks.Columns[1].Width = 300;
+            this.lvLinks.Columns.Add("keyname");
+            this.lvLinks.Columns[2].Width = 100;
+            //this.lvLinks.Columns[1].Width = 0;
             this.Text = "Runplus";
-            Hotkey.Regist(this.Handle, HotkeyModifiers.MOD_WIN, Keys.Space, Test);
+       
             this.ControlBox = false;
             this.ShowInTaskbar = false;
-            this.listView1.HideSelection = false;
-            this.listView1.MultiSelect = false;
+            this.lvLinks.HideSelection = false;
+            this.lvLinks.MultiSelect = false;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.ControlBox = true;
             this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
             this.timer1.Enabled = false;
         }
-        void Test()
+        void DoHotKey()
         {
-            //MessageBox.Show("Test");
-            //this.TopMost = true;
             this.Visible = !this.Visible ;
             if (this.Visible)
             {
                 ShellHelper.SwitchToThisWindow(this.Handle, true);
-                //this.Opacity = ;
-                this.textBox1.Focus();
+                this.edQuery.Focus();
+                this.edQuery.SelectAll();
             }
         }
 
@@ -58,28 +59,59 @@ namespace runplus
             Hotkey.ProcessHotKey(m);
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            
-        } 
-        private Hashtable ht = new Hashtable();
+
+       
 
 
-        private void doRefresh(string query)
+        private void doRefresh(string query,Hashtable ht)
         {
-            this.listView1.Items.Clear();
-            foreach (DictionaryEntry k in ht)
+            this.lvLinks.Items.Clear();
+            // 
+            string querykey = query.ToLower();                    
+            if (querykey == "")
             {
-                if (query == "" ||k.Key.ToString().Contains(query))
+                foreach (DictionaryEntry k in ht)
                 {
-                    ListViewItem lvi = this.listView1.Items.Add(k.Key.ToString());
-                    lvi.SubItems.Add(k.Value.ToString());
+                    RunLink link = ((RunLink)(k.Value));
+                    ListViewItem lvi = this.lvLinks.Items.Add(link.FileName);
+                    lvi.SubItems.Add(link.FullFileName);
+                    lvi.Tag = link;
                 }
             }
-            if (this.listView1.Items.Count > 0)
+            else
+            {
+                // 优先列出相等的
+                foreach (DictionaryEntry k in ht)
+                {                    
+                    if (IsEquals(querykey,  k))
+                    {
+                        DoPopulate(k);
+                    }
+
+                }
+                // 其实列出打头的
+                foreach (DictionaryEntry k in ht)
+                {
+                    string innerkey = k.Key.ToString();
+                    if (!IsEquals(querykey, k) && IsStartWiths(querykey,k))
+                    {
+                        DoPopulate(k);
+                    }
+                }
+                // 然后列出包含的
+                foreach (DictionaryEntry k in ht)
+                {
+                    string innerkey = k.Key.ToString();
+                    if (!innerkey.Equals(querykey) && !innerkey.StartsWith(querykey) && IsContains(querykey,k))
+                    {
+                        DoPopulate(k);
+                    }
+                }
+            }
+            if (this.lvLinks.Items.Count > 0)
             {
                 this.pictureBox1.Show();
-                string Path2Link = this.listView1.Items[0].SubItems[1].Text;
+                string Path2Link = this.lvLinks.Items[0].SubItems[1].Text;
                 this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
             }
             else
@@ -87,63 +119,85 @@ namespace runplus
 
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private static bool IsEquals(string querykey, DictionaryEntry k)
+        {
+            string innerkey = k.Key.ToString();
+            return (k.Value.GetType() == typeof(RunLink) && innerkey.Equals(querykey))
+                                    || (k.Value.GetType() == typeof(KeyRunLink) && ((KeyRunLink)(k.Value)).KeyName.Equals(querykey));
+        }
+        private static bool IsStartWiths(string querykey, DictionaryEntry k)
+        {
+            string innerkey = k.Key.ToString();
+            return (k.Value.GetType() == typeof(RunLink) && innerkey.StartsWith(querykey))
+                                    || (k.Value.GetType() == typeof(KeyRunLink) && ((KeyRunLink)(k.Value)).KeyName.StartsWith(querykey));
+        }
+        private static bool IsContains(string querykey, DictionaryEntry k)
+        {
+            string innerkey = k.Key.ToString();
+            return (k.Value.GetType() == typeof(RunLink) && innerkey.Contains(querykey))
+                                    || (k.Value.GetType() == typeof(KeyRunLink) && ((KeyRunLink)(k.Value)).KeyName.Contains(querykey));
+        }
+        private DictionaryEntry DoPopulate(DictionaryEntry k)
+        {
+            RunLink link = ((RunLink)(k.Value));
+            ListViewItem lvi = this.lvLinks.Items.Add(link.FileName);
+            lvi.Tag = k.Value;
+            lvi.SubItems.Add(link.FullFileName);
+            if (k.Value.GetType()==typeof(KeyRunLink))
+                lvi.SubItems.Add(((KeyRunLink)link).KeyName);
+            return k;
+        }
+
+        private void lvLinks_SelectedIndexChanged(object sender, EventArgs e)
         {
  
-            if (this.listView1.SelectedIndices.Count > 0)
+            if (this.lvLinks.SelectedIndices.Count > 0)
             {
-                int index = this.listView1.SelectedIndices[0];
-                string Path2Link = this.listView1.Items[index].SubItems[1].Text;
+                int index = this.lvLinks.SelectedIndices[0];
+                string Path2Link = this.lvLinks.Items[index].SubItems[1].Text;
                 this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
                 
             }
         }
 
-        private void listView1_Click(object sender, EventArgs e)
-        {
- 
-        }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-   
-        }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void edQuery_Changed(object sender, EventArgs e)
         {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            doRefresh(this.textBox1.Text.ToLower());
+            doRefresh(this.edQuery.Text.ToLower(),links.HT);
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (this.listView1.Items.Count == 0) return;
+            if (this.lvLinks.Items.Count == 0) return;
             if (e.KeyCode == Keys.Enter)
             {
-                if (this.listView1.Items.Count > 0)
+                if (this.lvLinks.Items.Count > 0)
                 {
                     string Path2Link = "";
-                    if (this.listView1.SelectedIndices.Count == 0)
+                    RunLink link = null;
+                    if (this.lvLinks.SelectedIndices.Count == 0)
                     {
-                       Path2Link = this.listView1.Items[0].SubItems[1].Text;
-                        
-                    }else
-                        Path2Link = this.listView1.Items[this.listView1.SelectedIndices[0]].SubItems[1].Text;
+                        Path2Link = this.lvLinks.Items[0].SubItems[1].Text;
+                        link = (RunLink)(this.lvLinks.Items[0].Tag);
+                    }
+                    else
+                    {
+                        Path2Link = this.lvLinks.Items[this.lvLinks.SelectedIndices[0]].SubItems[1].Text;                     
+                        link = (RunLink)(this.lvLinks.Items[this.lvLinks.SelectedIndices[0]].Tag);
+                    }
                     Process.Start(Path2Link);
+                    this.links.AddKeyWord(edQuery.Text, link);
                     this.Visible = false;
                 }
             }
             else if (e.KeyCode == Keys.Up || e.KeyCode ==Keys.Down)
             {
-                if (this.listView1.SelectedIndices.Count == 0 )
-                    this.listView1.SelectedIndices.Add(0);
-                int newindex = e.KeyCode == Keys.Up ? this.listView1.SelectedIndices[0] - 1 : this.listView1.SelectedIndices[0] + 1;
-                if (newindex >=0 && newindex <= this.listView1.Items.Count -1)
-                    this.listView1.SelectedIndices.Add(newindex);
+                if (this.lvLinks.SelectedIndices.Count == 0 )
+                    this.lvLinks.SelectedIndices.Add(0);
+                int newindex = e.KeyCode == Keys.Up ? this.lvLinks.SelectedIndices[0] - 1 : this.lvLinks.SelectedIndices[0] + 1;
+                if (newindex >=0 && newindex <= this.lvLinks.Items.Count -1)
+                    this.lvLinks.SelectedIndices.Add(newindex);
 
             }
         }
@@ -151,27 +205,27 @@ namespace runplus
         private void Form1_Load(object sender, EventArgs e)
         {
             this.KeyPreview = true;
-            string currdir = ShellHelper.GetStartMenu();
-            //this.listView1.Items.Add(path);
-            DirectoryInfo di = new DirectoryInfo(currdir);
-            FileInfo[] rgFiles = di.GetFiles("*.lnk", SearchOption.AllDirectories);
-            foreach (FileInfo fi in rgFiles)
+            links.Populate();
+            doRefresh("",links.HT);
+            try
             {
-                string fullfilename = fi.DirectoryName + "\\" + fi.Name;
-                string filename = fi.Name.ToLower();
-                if (!ht.Contains(filename))
-                    ht.Add(filename, fullfilename);
+                Hotkey.Register(this.Handle, HotkeyModifiers.MOD_WIN, Keys.Space, DoHotKey);
             }
-            doRefresh("");
+            catch
+            {
+                MessageBox.Show("hotkey register failure ! exit .");
+                Application.ExitThread();
+            }
             
         }
 
+
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
-            if (this.listView1.SelectedIndices.Count > 0)
+            if (this.lvLinks.SelectedIndices.Count > 0)
             {
-                int index = this.listView1.SelectedIndices[0];
-                string Path2Link = this.listView1.Items[index].SubItems[1].Text;
+                int index = this.lvLinks.SelectedIndices[0];
+                string Path2Link = this.lvLinks.Items[index].SubItems[1].Text;
                 this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
                 Process.Start(Path2Link);
                 this.Visible = false;
@@ -181,12 +235,12 @@ namespace runplus
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Hotkey.UnRegist(this.Handle, Test);
+            Hotkey.UnRegist(this.Handle, DoHotKey);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            this.textBox1.Focus();
+            this.edQuery.Focus();
             //AnimateWindow(this.Handle, 1000, AW_CENTER | AW_ACTIVATE | AW_BLEND);
 
 
@@ -226,6 +280,12 @@ namespace runplus
                 this.Opacity -= 0.02;
             }
 
+        }
+
+        private void btnViewKeywords_Click(object sender, EventArgs e)
+        {
+             ViewKeyWord v = new ViewKeyWord ();
+             //v.DoShow(this.links.Keywords);
         }
     }
 }
