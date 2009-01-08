@@ -1,0 +1,119 @@
+﻿using System;
+
+using System.Text;
+using System.Collections;
+using System.IO;
+using System.Windows.Forms;
+
+namespace runplus
+{
+    class RunLinks
+    {
+        private Hashtable ht = new Hashtable();
+        private Hashtable htKeywords = new Hashtable();
+
+        private Hashtable Keywords
+        {
+            get { return htKeywords; }
+            set { htKeywords = value; }
+        }
+
+        public Hashtable HT
+        {
+            get { return ht; }
+        }
+        private void GetStartMenu1()
+        {
+            string wild = "*.lnk";
+            SearchOption so = SearchOption.AllDirectories;
+            string currdir = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
+            GetFiles(wild, so, currdir);
+        }
+
+        private void GetFiles(string wild, SearchOption so, string currdir)
+        {
+            DirectoryInfo di = new DirectoryInfo(currdir);
+            FileInfo[] rgFiles = di.GetFiles(wild, so);
+            foreach (FileInfo fi in rgFiles)
+            {
+                string fullfilename = fi.DirectoryName + "\\" + fi.Name;
+                string filename = fi.Name.ToLower();
+                string key = filename;
+                RunLink runlink = new RunLink(filename, fullfilename);
+                if (!ht.Contains(key))
+                    ht.Add(key, runlink);
+            }
+        }
+        private void GetStartMenu2()
+        {
+            string currdir = ShellHelper.GetStartMenu();
+            string wild = "*.lnk";
+            SearchOption so = SearchOption.AllDirectories;
+            GetFiles(wild, so, currdir);
+        }
+        private void GetSystem32()
+        {
+            string currdir = Environment.SystemDirectory;
+            string wild = "*.exe";
+            SearchOption so = SearchOption.TopDirectoryOnly;
+            GetFiles(wild, so, currdir);
+        }
+        private void GetCurrent()
+        {
+            string currdir = Environment.CurrentDirectory;
+            string wild = "*.exe";
+            SearchOption so = SearchOption.TopDirectoryOnly;
+            GetFiles(wild, so, currdir);
+        }
+        internal void Populate()
+        {
+            GetStartMenu1();
+            GetStartMenu2();
+            GetSystem32();
+            GetCurrent();
+        }
+
+        internal void AddKeyWord(string keyword,  RunLink link)
+        {
+            KeyRunLink keylink = new KeyRunLink(keyword,link.FileName,link.FullFileName); 
+            string filename = link.FileName;
+            ht[filename] = keylink;
+        }
+    }
+    class RunLink
+    {
+        private string fileName = "";
+
+        public string FileName
+        {
+            get { return fileName; }
+            set { fileName = value; }
+        }
+        private string fullFileName = "";
+
+        public string FullFileName
+        {
+            get { return fullFileName; }
+            set { fullFileName = value; }
+        }
+        public RunLink(string filename,string fullfilename)
+        {
+            fileName = filename;
+            fullFileName = fullfilename;
+        }
+    }
+    class KeyRunLink : RunLink
+    {
+        private string keyName = "";
+
+        public string KeyName
+        {
+            get { return keyName; }
+            set { keyName = value; }
+        }
+        public KeyRunLink(string keyname,string filename, string fullfilename):base(filename,fullfilename)
+        {
+            keyName = keyname;
+        }
+    }
+}
