@@ -205,6 +205,7 @@ namespace runplus
         private void Form1_Load(object sender, EventArgs e)
         {
             this.KeyPreview = true;
+            this.btnViewKeywords.Visible = false;
             links.Populate();
             doRefresh("",links.HT);
             try

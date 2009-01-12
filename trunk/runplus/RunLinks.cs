@@ -2,6 +2,7 @@
 
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -10,14 +11,10 @@ namespace runplus
     class RunLinks
     {
         private Hashtable ht = new Hashtable();
-        private Hashtable htKeywords = new Hashtable();
-
-        private Hashtable Keywords
-        {
-            get { return htKeywords; }
-            set { htKeywords = value; }
-        }
-
+        // 看了文章后，自己看看2.0 内泛型的支持
+        private Dictionary<string, RunLink> ht1 = new Dictionary<string, RunLink>();
+        private List<string> ht2 = new List<string>();
+        
         public Hashtable HT
         {
             get { return ht; }
@@ -28,6 +25,7 @@ namespace runplus
             SearchOption so = SearchOption.AllDirectories;
             string currdir = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
             GetFiles(wild, so, currdir);
+            
         }
 
         private void GetFiles(string wild, SearchOption so, string currdir)
@@ -43,6 +41,7 @@ namespace runplus
                 if (!ht.Contains(key))
                     ht.Add(key, runlink);
             }
+            
         }
         private void GetStartMenu2()
         {
