@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderZipper", "FolderZipper.csproj", "{41E66847-F4A9-42E2-8A05-64BB5E4CC622}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{EE08583B-3BA3-4E1C-A669-8B2439B3DA32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41E66847-F4A9-42E2-8A05-64BB5E4CC622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41E66847-F4A9-42E2-8A05-64BB5E4CC622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41E66847-F4A9-42E2-8A05-64BB5E4CC622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41E66847-F4A9-42E2-8A05-64BB5E4CC622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE08583B-3BA3-4E1C-A669-8B2439B3DA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE08583B-3BA3-4E1C-A669-8B2439B3DA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE08583B-3BA3-4E1C-A669-8B2439B3DA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE08583B-3BA3-4E1C-A669-8B2439B3DA32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
