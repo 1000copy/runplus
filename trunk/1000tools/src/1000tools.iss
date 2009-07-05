@@ -30,10 +30,7 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: ..\\pack\runplus.exe; DestDir: {app}; Flags: ignoreversion
 Source: ..\\pack\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
 [Icons]
 Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
@@ -44,4 +41,5 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filen
 Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: nowait postinstall skipifsilent
 [Registry]
 Root: HKCR; Subkey: .txt; ValueType: string; ValueData: 1000tools
+Root: HKCR; Subkey: .rb; ValueType: string; ValueData: 1000tools
 Root: HKCR; Subkey: 1000tools\shell\open\command; ValueType: string; ValueData: {app}\sc178.exe %1
