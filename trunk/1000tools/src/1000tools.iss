@@ -42,3 +42,6 @@ Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filen
 
 [Run]
 Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: nowait postinstall skipifsilent
+[Registry]
+Root: HKCR; Subkey: .txt; ValueType: string; ValueData: 1000tools
+Root: HKCR; Subkey: 1000tools\shell\open\command; ValueType: string; ValueData: {app}\sc178.exe %1
