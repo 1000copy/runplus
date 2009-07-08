@@ -17,7 +17,7 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 InfoAfterFile=..\\pack\1000toolsreadme.txt
-OutputDir=..\\bin
+OutputDir=..\\bin2
 OutputBaseFilename=1000tools
 Compression=lzma
 SolidCompression=yes
@@ -30,7 +30,7 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: ..\\pack\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
+;Source: ..\\pack\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
 [Icons]
 Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
@@ -42,4 +42,11 @@ Filename: {app}\{#MyAppExeName}; Description: {cm:LaunchProgram,{#MyAppName}}; F
 [Registry]
 Root: HKCR; Subkey: .txt; ValueType: string; ValueData: 1000tools
 Root: HKCR; Subkey: .rb; ValueType: string; ValueData: 1000tools
+Root: HKCR; Subkey: .sql; ValueType: string; ValueData: 1000tools
+Root: HKCR; Subkey: .log; ValueType: string; ValueData: 1000tools
+Root: HKCR; Subkey: .cs; ValueType: string; ValueData: 1000tools
+Root: HKCR; Subkey: .pas; ValueType: string; ValueData: 1000tools
 Root: HKCR; Subkey: 1000tools\shell\open\command; ValueType: string; ValueData: {app}\sc178.exe %1
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueData: {app}\runplus.exe
+
+
