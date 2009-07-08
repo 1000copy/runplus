@@ -34,6 +34,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.btnViewKeywords = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,7 +46,7 @@
             this.lvLinks.HideSelection = false;
             this.lvLinks.Location = new System.Drawing.Point(12, 56);
             this.lvLinks.Name = "lvLinks";
-            this.lvLinks.Size = new System.Drawing.Size(245, 99);
+            this.lvLinks.Size = new System.Drawing.Size(389, 99);
             this.lvLinks.TabIndex = 0;
             this.lvLinks.UseCompatibleStateImageBehavior = false;
             this.lvLinks.SelectedIndexChanged += new System.EventHandler(this.lvLinks_SelectedIndexChanged);
@@ -55,7 +56,7 @@
             // 
             this.edQuery.Location = new System.Drawing.Point(12, 33);
             this.edQuery.Name = "edQuery";
-            this.edQuery.Size = new System.Drawing.Size(245, 21);
+            this.edQuery.Size = new System.Drawing.Size(389, 21);
             this.edQuery.TabIndex = 5;
             this.edQuery.TextChanged += new System.EventHandler(this.edQuery_Changed);
             this.edQuery.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -84,11 +85,22 @@
             this.btnViewKeywords.UseVisualStyleBackColor = true;
             this.btnViewKeywords.Click += new System.EventHandler(this.btnViewKeywords_Click);
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(185, 4);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(35, 23);
+            this.btnRefresh.TabIndex = 8;
+            this.btnRefresh.Text = "R";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.button1_Click);
+            // 
             // fmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(273, 158);
+            this.ClientSize = new System.Drawing.Size(417, 158);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnViewKeywords);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.edQuery);
@@ -120,6 +132,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btnViewKeywords;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }
 
