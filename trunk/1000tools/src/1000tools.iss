@@ -30,9 +30,10 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-;Source: ..\\pack\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\\pack\*; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
 [Icons]
 Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}
+Name: {group}\easycmd; Filename: {app}\easycmd.exe
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
 Name: {commondesktop}\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: desktopicon
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: quicklaunchicon
@@ -48,5 +49,4 @@ Root: HKCR; Subkey: .cs; ValueType: string; ValueData: 1000tools
 Root: HKCR; Subkey: .pas; ValueType: string; ValueData: 1000tools
 Root: HKCR; Subkey: 1000tools\shell\open\command; ValueType: string; ValueData: {app}\sc178.exe %1
 Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; ValueType: string; ValueData: {app}\runplus.exe
-
 

@@ -24,8 +24,7 @@ namespace runplus
             string wild = "*.lnk";
             SearchOption so = SearchOption.AllDirectories;
             string currdir = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
-            GetFiles(wild, so, currdir);
-            
+            GetFiles(wild, so, currdir);            
         }
 
         private void GetFiles(string wild, SearchOption so, string currdir)
@@ -66,11 +65,42 @@ namespace runplus
         }
         internal void Populate()
         {
+            HT.Clear();            
             GetStartMenu1();
             GetStartMenu2();
             GetSystem32();
             GetCurrent();
+            FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.Path = Environment.CurrentDirectory;
+            watcher.IncludeSubdirectories = true;
+            watcher.Filter = "*.exe";
+            /* Watch for changes in LastAccess and LastWrite times, and
+               the renaming of files or directories. */
+            watcher.NotifyFilter = //NotifyFilters.LastAccess | NotifyFilters.LastWrite|
+                NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            
+            // Add event handlers.
+            watcher.Changed += new FileSystemEventHandler(OnChanged);
+            watcher.Created += new FileSystemEventHandler(OnChanged);
+            watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            watcher.Renamed += new RenamedEventHandler(OnRenamed);
+
+            // Begin watching.
+            watcher.EnableRaisingEvents = true;
+
         }
+        // Define the event handlers.
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            //MessageBox.Show("change" + e.FullPath+e.Name+e.ChangeType.ToString());
+            Populate();
+        }
+
+        private void OnRenamed(object source, RenamedEventArgs e)
+        {
+            Populate();
+        }
+
 
         internal void AddKeyWord(string keyword,  RunLink link)
         {

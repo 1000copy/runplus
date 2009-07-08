@@ -112,7 +112,13 @@ namespace runplus
             {
                 this.pictureBox1.Show();
                 string Path2Link = this.lvLinks.Items[0].SubItems[1].Text;
-                this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
+                try
+                {
+                    this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
+                }
+                catch
+                {
+                }
             }
             else
                 this.pictureBox1.Hide();
@@ -206,8 +212,7 @@ namespace runplus
         {
             this.KeyPreview = true;
             this.btnViewKeywords.Visible = false;
-            links.Populate();
-            doRefresh("",links.HT);
+            this.btnRefresh.Visible = false;
             try
             {
                 Hotkey.Register(this.Handle, HotkeyModifiers.MOD_WIN, Keys.Space, DoHotKey);
@@ -217,7 +222,15 @@ namespace runplus
                 MessageBox.Show("hotkey register failure ! exit .");
                 Application.ExitThread();
             }
+            Reload();
             
+        }
+
+        private void Reload()
+        {
+            
+            links.Populate();
+            doRefresh("", links.HT);            
         }
 
 
@@ -287,6 +300,11 @@ namespace runplus
         {
              ViewKeyWord v = new ViewKeyWord ();
              //v.DoShow(this.links.Keywords);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Reload();
         }
     }
 }
