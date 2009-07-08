@@ -70,23 +70,7 @@ namespace runplus
             GetStartMenu2();
             GetSystem32();
             GetCurrent();
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = Environment.CurrentDirectory;
-            watcher.IncludeSubdirectories = true;
-            watcher.Filter = "*.exe";
-            /* Watch for changes in LastAccess and LastWrite times, and
-               the renaming of files or directories. */
-            watcher.NotifyFilter = //NotifyFilters.LastAccess | NotifyFilters.LastWrite|
-                NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            
-            // Add event handlers.
-            watcher.Changed += new FileSystemEventHandler(OnChanged);
-            watcher.Created += new FileSystemEventHandler(OnChanged);
-            watcher.Deleted += new FileSystemEventHandler(OnChanged);
-            watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
-            // Begin watching.
-            watcher.EnableRaisingEvents = true;
+            new RunDir(Environment.CurrentDirectory, "*.exe", this);            
 
         }
         // Define the event handlers.
@@ -108,6 +92,47 @@ namespace runplus
             string filename = link.FileName;
             ht[filename] = keylink;
         }
+    }
+    class RunDir
+    {
+        FileSystemWatcher watcher = new FileSystemWatcher();
+        public string Dir;
+        public string Ext;
+        public RunDir(string dir, string ext,RunLinks links)
+        {
+            Dir = dir;
+            Ext = ext;
+            Links = links;
+            watcher.Path = dir ;
+            watcher.IncludeSubdirectories = true;
+            watcher.Filter = ext;
+            /* Watch for changes in LastAccess and LastWrite times, and
+               the renaming of files or directories. */
+            watcher.NotifyFilter = //NotifyFilters.LastAccess | NotifyFilters.LastWrite|
+                NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+            // Add event handlers.
+            watcher.Changed += new FileSystemEventHandler(OnChanged);
+            watcher.Created += new FileSystemEventHandler(OnChanged);
+            watcher.Deleted += new FileSystemEventHandler(OnChanged);
+            watcher.Renamed += new RenamedEventHandler(OnRenamed);
+
+            // Begin watching.
+            watcher.EnableRaisingEvents = true;
+        }
+        RunLinks Links = null;
+        // Define the event handlers.
+        private void OnChanged(object source, FileSystemEventArgs e)
+        {
+            //MessageBox.Show("change" + e.FullPath+e.Name+e.ChangeType.ToString());
+            Links.Populate();
+        }
+
+        private void OnRenamed(object source, RenamedEventArgs e)
+        {
+            Links.Populate();
+        }
+
     }
     class RunLink
     {
