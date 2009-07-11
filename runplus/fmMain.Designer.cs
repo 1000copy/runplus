@@ -46,7 +46,7 @@
             this.lvLinks.HideSelection = false;
             this.lvLinks.Location = new System.Drawing.Point(12, 56);
             this.lvLinks.Name = "lvLinks";
-            this.lvLinks.Size = new System.Drawing.Size(389, 99);
+            this.lvLinks.Size = new System.Drawing.Size(527, 99);
             this.lvLinks.TabIndex = 0;
             this.lvLinks.UseCompatibleStateImageBehavior = false;
             this.lvLinks.SelectedIndexChanged += new System.EventHandler(this.lvLinks_SelectedIndexChanged);
@@ -56,7 +56,7 @@
             // 
             this.edQuery.Location = new System.Drawing.Point(12, 33);
             this.edQuery.Name = "edQuery";
-            this.edQuery.Size = new System.Drawing.Size(389, 21);
+            this.edQuery.Size = new System.Drawing.Size(527, 21);
             this.edQuery.TabIndex = 5;
             this.edQuery.TextChanged += new System.EventHandler(this.edQuery_Changed);
             this.edQuery.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -99,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 158);
+            this.ClientSize = new System.Drawing.Size(555, 158);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnViewKeywords);
             this.Controls.Add(this.pictureBox1);
