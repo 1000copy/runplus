@@ -29,7 +29,7 @@ namespace runplus
             foreach (DictionaryEntry k in ht)
             {
                 ListViewItem item = this.listView1.Items.Add(k.Key.ToString());
-                RunLink link = (RunLink)k.Value;
+                Link link = (Link)k.Value;
                 if (link != null)
                 {
                     item.SubItems.Add(link.FileName);
