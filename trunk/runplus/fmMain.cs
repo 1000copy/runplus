@@ -91,8 +91,11 @@ namespace runplus
             {
                 int index = this.lvLinks.SelectedIndices[0];
                 string Path2Link = this.lvLinks.Items[index].SubItems[1].Text;
-                this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
-                
+                try
+                {
+                    this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
+                }
+                catch { }
             }
         }
 
