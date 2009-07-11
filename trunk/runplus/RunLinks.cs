@@ -31,10 +31,13 @@ namespace runplus
             {
                 if (keyValue.Value is KeyLink)
                 {
-                    text += (keyValue.Value as KeyLink).KeyName + ";" + keyValue.Value.FullFileName + "\n";
+                    text += (keyValue.Value as KeyLink).KeyName + ";" + keyValue.Value.FullFileName + "\r\n";
                 }
-            }
-            File.WriteAllText(conf,text);
+            }            
+            // File.WriteAllText(conf,text)
+            // 明确指明为utf8，这样sc可以识别，不会默认为codepage，表现出乱码。
+            File.WriteAllText(conf,text,Encoding.UTF8);
+            
         }
         void LoadKeys()
         {

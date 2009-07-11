@@ -26,7 +26,7 @@ namespace runplus
             //this.listView1.Dock = DockStyle.Bottom;
 
             this.lvLinks.Columns.Add("name");
-            this.lvLinks.Columns[0].Width = 200;
+            this.lvLinks.Columns[0].Width = 100;
             this.lvLinks.Columns.Add("fullname");
             this.lvLinks.Columns[1].Width = 300;
             this.lvLinks.Columns.Add("keyname");
