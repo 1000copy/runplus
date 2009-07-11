@@ -36,8 +36,7 @@ namespace runplus
             }            
             // File.WriteAllText(conf,text)
             // 明确指明为utf8，这样sc可以识别，不会默认为codepage，表现出乱码。
-            File.WriteAllText(conf,text,Encoding.UTF8);
-            
+            File.WriteAllText(conf,text,Encoding.UTF8);            
         }
         void LoadKeys()
         {
@@ -197,9 +196,10 @@ namespace runplus
         {
         }
     }
-    class LinkAdapter
+    
+    class LinkAdapter:IWatcherSink
     {
-        FileSystemWatcher watcher = new FileSystemWatcher();
+        FSWatcher watcher = null;
         public string Dir;
         public string Ext;
         public bool Rescure = false;
@@ -210,24 +210,11 @@ namespace runplus
             RunLinks = links;
             Rescure = rescure;
             MakeLinks();
-            WatchChange(dir, ext);
+            watcher = new FSWatcher(this);
+            watcher.WatchChange(dir, ext);
         }
 
-        private void WatchChange(string dir, string ext)
-        {
-            // 监视这个目录的变化
-            watcher.Path = dir;
-            watcher.IncludeSubdirectories = true;
-            watcher.Filter = ext;
-            watcher.NotifyFilter = //NotifyFilters.LastAccess | NotifyFilters.LastWrite|
-                NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            watcher.Changed += new FileSystemEventHandler(OnChanged);
-            watcher.Created += new FileSystemEventHandler(OnChanged);
-            watcher.Deleted += new FileSystemEventHandler(OnChanged);
-            watcher.Renamed += new RenamedEventHandler(OnRenamed);
-            watcher.EnableRaisingEvents = true;
-        }
-
+        
         private  void MakeLinks()
         {
             // 搜索这个目录，构建搜索池            
@@ -239,16 +226,16 @@ namespace runplus
             RunLinks.Fill(rgFiles);
         }
         LinkSet RunLinks = null;
-        private void OnChanged(object source, FileSystemEventArgs e)
+        
+
+        #region IWatcherSink Members
+
+        void IWatcherSink.changed()
         {
             MakeLinks();
         }
 
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            MakeLinks();
-        }
-
+        #endregion
     }
     class Link
     {

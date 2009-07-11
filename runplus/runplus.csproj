@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileSystemWatcher.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="fmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,7 +91,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="RunLinks.cs" />
+    <Compile Include="RunLinks.cs">
+    </Compile>
     <Compile Include="ShellHelper.cs" />
     <Compile Include="ViewKeyWord.cs">
       <SubType>Form</SubType>

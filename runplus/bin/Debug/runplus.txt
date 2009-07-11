@@ -1,2 +1,1 @@
-﻿1;C:\WINDOWS\system32\notepad.exe
-2;C:\Documents and Settings\All Users\「开始」菜单\程序\Microsoft Visual Studio 2008\Microsoft Visual Studio 2008.lnk
+﻿2;C:\Documents and Settings\All Users\「开始」菜单\程序\Microsoft Visual Studio 2008\Microsoft Visual Studio 2008.lnk
