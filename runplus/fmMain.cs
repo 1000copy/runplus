@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 
 namespace runplus
@@ -17,7 +18,7 @@ namespace runplus
 
     public partial class fmMain : Form
     {
-        private RunLinks links = new RunLinks();
+        private LinkSet links = new LinkSet();
         public fmMain()
         {
             InitializeComponent();
@@ -60,97 +61,26 @@ namespace runplus
         }
 
 
-       
 
 
-        private void doRefresh(string query,Hashtable ht)
+
+        private void doRefresh(string query, LinkSet runLinks)
         {
-            this.lvLinks.Items.Clear();
             // 
-            string querykey = query.ToLower();                    
-            if (querykey == "")
+            foreach (KeyValuePair<string, Link> k in runLinks.MatchLinks(query))
             {
-                foreach (DictionaryEntry k in ht)
-                {
-                    RunLink link = ((RunLink)(k.Value));
-                    ListViewItem lvi = this.lvLinks.Items.Add(link.FileName);
-                    lvi.SubItems.Add(link.FullFileName);
-                    lvi.Tag = link;
-                }
+                DoPopulate(k);
             }
-            else
-            {
-                // 优先列出相等的
-                foreach (DictionaryEntry k in ht)
-                {                    
-                    if (IsEquals(querykey,  k))
-                    {
-                        DoPopulate(k);
-                    }
-
-                }
-                // 其实列出打头的
-                foreach (DictionaryEntry k in ht)
-                {
-                    string innerkey = k.Key.ToString();
-                    if (!IsEquals(querykey, k) && IsStartWiths(querykey,k))
-                    {
-                        DoPopulate(k);
-                    }
-                }
-                // 然后列出包含的
-                foreach (DictionaryEntry k in ht)
-                {
-                    string innerkey = k.Key.ToString();
-                    if (!innerkey.Equals(querykey) && !innerkey.StartsWith(querykey) && IsContains(querykey,k))
-                    {
-                        DoPopulate(k);
-                    }
-                }
-            }
-            if (this.lvLinks.Items.Count > 0)
-            {
-                this.pictureBox1.Show();
-                string Path2Link = this.lvLinks.Items[0].SubItems[1].Text;
-                try
-                {
-                    this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
-                }
-                catch
-                {
-                }
-            }
-            else
-                this.pictureBox1.Hide();
-
         }
-
-        private static bool IsEquals(string querykey, DictionaryEntry k)
+        
+        private KeyValuePair<string, Link> DoPopulate(KeyValuePair<string, Link> k)
         {
-            string innerkey = k.Key.ToString();
-            return (k.Value.GetType() == typeof(RunLink) && innerkey.Equals(querykey))
-                                    || (k.Value.GetType() == typeof(KeyRunLink) && ((KeyRunLink)(k.Value)).KeyName.Equals(querykey));
-        }
-        private static bool IsStartWiths(string querykey, DictionaryEntry k)
-        {
-            string innerkey = k.Key.ToString();
-            return (k.Value.GetType() == typeof(RunLink) && innerkey.StartsWith(querykey))
-                                    || (k.Value.GetType() == typeof(KeyRunLink) && ((KeyRunLink)(k.Value)).KeyName.StartsWith(querykey));
-        }
-        private static bool IsContains(string querykey, DictionaryEntry k)
-        {
-            string innerkey = k.Key.ToString();
-            return (k.Value.GetType() == typeof(RunLink) && innerkey.Contains(querykey))
-                                    || (k.Value.GetType() == typeof(KeyRunLink) && ((KeyRunLink)(k.Value)).KeyName.Contains(querykey));
-        }
-        private DictionaryEntry DoPopulate(DictionaryEntry k)
-        {
-            RunLink link = ((RunLink)(k.Value));
+            Link link = ((Link)(k.Value));
             ListViewItem lvi = this.lvLinks.Items.Add(link.FileName);
             lvi.Tag = k.Value;
             lvi.SubItems.Add(link.FullFileName);
-            if (k.Value.GetType()==typeof(KeyRunLink))
-                lvi.SubItems.Add(((KeyRunLink)link).KeyName);
+            if (k.Value.GetType()==typeof(KeyLink))
+                lvi.SubItems.Add(((KeyLink)link).KeyName);
             return k;
         }
 
@@ -170,7 +100,29 @@ namespace runplus
 
         private void edQuery_Changed(object sender, EventArgs e)
         {
-            doRefresh(this.edQuery.Text.ToLower(),links.HT);
+            this.lvLinks.Items.Clear(); 
+           
+            doRefresh(this.edQuery.Text.ToLower(),links);
+            UpdateIcon();
+        }
+
+        private void UpdateIcon()
+        {
+            // 更新当前选择文件的图标
+            if (this.lvLinks.Items.Count > 0)
+            {
+                this.pictureBox1.Show();
+                string Path2Link = this.lvLinks.Items[0].SubItems[1].Text;
+                try
+                {
+                    this.pictureBox1.Image = Icon.FromHandle(ShellHelper.GetIcon(Path2Link)).ToBitmap();
+                }
+                catch
+                {
+                }
+            }
+            else
+                this.pictureBox1.Hide();
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -181,16 +133,16 @@ namespace runplus
                 if (this.lvLinks.Items.Count > 0)
                 {
                     string Path2Link = "";
-                    RunLink link = null;
+                    Link link = null;
                     if (this.lvLinks.SelectedIndices.Count == 0)
                     {
                         Path2Link = this.lvLinks.Items[0].SubItems[1].Text;
-                        link = (RunLink)(this.lvLinks.Items[0].Tag);
+                        link = (Link)(this.lvLinks.Items[0].Tag);
                     }
                     else
                     {
                         Path2Link = this.lvLinks.Items[this.lvLinks.SelectedIndices[0]].SubItems[1].Text;                     
-                        link = (RunLink)(this.lvLinks.Items[this.lvLinks.SelectedIndices[0]].Tag);
+                        link = (Link)(this.lvLinks.Items[this.lvLinks.SelectedIndices[0]].Tag);
                     }
                     Process.Start(Path2Link);
                     this.links.AddKeyWord(edQuery.Text, link);
@@ -227,10 +179,10 @@ namespace runplus
         }
 
         private void Reload()
-        {
-            
-            links.Populate();
-            doRefresh("", links.HT);            
+        {            
+            links.Init();
+            this.lvLinks.Items.Clear();
+            doRefresh("", links);
         }
 
 

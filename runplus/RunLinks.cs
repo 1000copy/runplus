@@ -8,133 +8,246 @@ using System.Windows.Forms;
 
 namespace runplus
 {
-    class RunLinks
+    class LinkSet
     {
-        private Hashtable ht = new Hashtable();
-        // 看了文章后，自己看看2.0 内泛型的支持
-        private Dictionary<string, RunLink> ht1 = new Dictionary<string, RunLink>();
-        private List<string> ht2 = new List<string>();
         
-        public Hashtable HT
-        {
-            get { return ht; }
-        }
-        private void GetStartMenu1()
-        {
-            string wild = "*.lnk";
-            SearchOption so = SearchOption.AllDirectories;
-            string currdir = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
-            GetFiles(wild, so, currdir);            
-        }
+        private Dictionary<string, Link> links = new Dictionary<string, Link>();
 
-        private void GetFiles(string wild, SearchOption so, string currdir)
+        private Dictionary<string, Link> Links
         {
-            DirectoryInfo di = new DirectoryInfo(currdir);
-            FileInfo[] rgFiles = di.GetFiles(wild, so);
+            get { return links; }
+            set { links = value; }
+        }
+        string confName = "runplus.txt";
+        ~LinkSet()
+        {
+            SaveKeys();
+        }
+        void SaveKeys()
+        {
+            string conf = AppDomain.CurrentDomain.BaseDirectory + confName;            
+            string text ="";
+            foreach (KeyValuePair<string, Link> keyValue in Links)
+            {
+                if (keyValue.Value is KeyLink)
+                {
+                    text += (keyValue.Value as KeyLink).KeyName + ";" + keyValue.Value.FullFileName + "\n";
+                }
+            }
+            File.WriteAllText(conf,text);
+        }
+        void LoadKeys()
+        {
+            string conf = AppDomain.CurrentDomain.BaseDirectory + confName;
+            if (File.Exists(conf))
+            {
+                StreamReader reader = File.OpenText(conf);
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string []  keys = line.Split(';');
+                    if (keys.Length ==2)
+                        AddKeyWord(keys[0],keys[1]);
+                }
+
+
+            }
+        }
+        internal void Fill(FileInfo[] rgFiles)
+        {
             foreach (FileInfo fi in rgFiles)
             {
                 string fullfilename = fi.DirectoryName + "\\" + fi.Name;
                 string filename = fi.Name.ToLower();
                 string key = filename;
-                RunLink runlink = new RunLink(filename, fullfilename);
-                if (!ht.Contains(key))
-                    ht.Add(key, runlink);
+                Link runlink = new Link(filename, fullfilename);
+                if (!Links.ContainsKey(key))
+                    Links.Add(key, runlink);
+                else
+                    links[key] = runlink;
             }
-            
         }
-        private void GetStartMenu2()
+        List<LinkAdapter> adapters = new List<LinkAdapter>();
+        internal void Init()
         {
-            string currdir = ShellHelper.GetStartMenu();
-            string wild = "*.lnk";
-            SearchOption so = SearchOption.AllDirectories;
-            GetFiles(wild, so, currdir);
+            Links.Clear();            
+            adapters.Add(new StartMenuLinkAdapter(this));    
+            adapters.Add(new SystemLinkAdapter(this));
+            adapters.Add(new CurrentDirLinkAdapter(this));
+            adapters.Add(new ProgramLinkAdapter(this));
+            LoadKeys();
         }
-        private void GetSystem32()
+      
+        internal void AddKeyWord(string keyword,  Link link)
         {
-            string currdir = Environment.SystemDirectory;
-            string wild = "*.exe";
-            SearchOption so = SearchOption.TopDirectoryOnly;
-            GetFiles(wild, so, currdir);
-        }
-        private void GetCurrent()
-        {
-            string currdir = Environment.CurrentDirectory;
-            string wild = "*.exe";
-            SearchOption so = SearchOption.TopDirectoryOnly;
-            GetFiles(wild, so, currdir);
-        }
-        internal void Populate()
-        {
-            HT.Clear();            
-            GetStartMenu1();
-            GetStartMenu2();
-            GetSystem32();
-            GetCurrent();
-            new RunDir(Environment.CurrentDirectory, "*.exe", this);            
-
-        }
-        // Define the event handlers.
-        private void OnChanged(object source, FileSystemEventArgs e)
-        {
-            //MessageBox.Show("change" + e.FullPath+e.Name+e.ChangeType.ToString());
-            Populate();
-        }
-
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            Populate();
-        }
-
-
-        internal void AddKeyWord(string keyword,  RunLink link)
-        {
-            KeyRunLink keylink = new KeyRunLink(keyword,link.FileName,link.FullFileName); 
+            KeyLink keylink = new KeyLink(keyword,link.FileName,link.FullFileName); 
             string filename = link.FileName;
-            ht[filename] = keylink;
+            Links[filename] = keylink;
+        }
+        internal void AddKeyWord(string keyword, string filename)
+        {
+            string name = new FileInfo(filename).Name;            
+            Links[name] = new KeyLink(keyword, name, filename);            
+        }
+
+
+        internal Dictionary<string, Link> MatchLinks(string query)
+        {
+            return MatchLinks(query,Links);
+        }
+        private Dictionary<string, Link> MatchLinks(string query, Dictionary<string, Link> ht)
+        {
+            // 
+            Dictionary<string, Link> results = new Dictionary<string, Link>();
+            string querykey = query.ToLower();
+            if (querykey == "")
+            {
+                foreach (KeyValuePair<string, Link> k in ht)
+                {
+                    AddOrUpdate(results, k);
+                }
+            }
+            else
+            {
+                // 优先列出相等的
+                foreach (KeyValuePair<string, Link> k in ht)
+                {
+                    if (IsEquals(querykey, k))
+                    {
+                        AddOrUpdate(results, k);
+                    }
+
+                }
+                // 其实列出打头的
+                foreach (KeyValuePair<string, Link> k in ht)
+                {
+                    string innerkey = k.Key.ToString();
+                    if (!IsEquals(querykey, k) && IsStartWiths(querykey, k))
+                    {
+                        AddOrUpdate(results, k);
+                    }
+                }
+                // 然后列出包含的
+                foreach (KeyValuePair<string, Link> k in ht)
+                {
+                    string innerkey = k.Key.ToString();
+                    if (!innerkey.Equals(querykey) && !innerkey.StartsWith(querykey) && IsContains(querykey, k))
+                    {
+                        AddOrUpdate(results, k);
+                    }
+                }
+            }
+            return results;
+
+        }
+        private void AddOrUpdate(Dictionary<string, Link> results, KeyValuePair<string, Link> keyValue)
+        {
+            if (results.ContainsKey(keyValue.Key))
+                results[keyValue.Key] = keyValue.Value;
+            else
+                results.Add(keyValue.Key, keyValue.Value);            
+        }
+        private static bool IsEquals(string querykey, KeyValuePair<string, Link> k)
+        {
+            string innerkey = k.Key.ToString();
+            return (k.Value.GetType() == typeof(Link) && innerkey.Equals(querykey))
+                                    || (k.Value.GetType() == typeof(KeyLink) && ((KeyLink)(k.Value)).KeyName.Equals(querykey));
+        }
+        private static bool IsStartWiths(string querykey, KeyValuePair<string, Link> k)
+        {
+            string innerkey = k.Key.ToString();
+            return (k.Value.GetType() == typeof(Link) && innerkey.StartsWith(querykey))
+                                    || (k.Value.GetType() == typeof(KeyLink) && ((KeyLink)(k.Value)).KeyName.StartsWith(querykey));
+        }
+        private static bool IsContains(string querykey, KeyValuePair<string, Link> k)
+        {
+            string innerkey = k.Key.ToString();
+            return (k.Value.GetType() == typeof(Link) && innerkey.Contains(querykey))
+                                    || (k.Value.GetType() == typeof(KeyLink) && ((KeyLink)(k.Value)).KeyName.Contains(querykey));
         }
     }
-    class RunDir
+    class StartMenuLinkAdapter : LinkAdapter
+    {
+        public StartMenuLinkAdapter(LinkSet links)
+            : base(ShellHelper.GetStartMenu(), "*.lnk", links, true)
+        {
+        }
+    }
+    class ProgramLinkAdapter : LinkAdapter
+    {
+        public ProgramLinkAdapter(LinkSet links)
+            : base(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "*.lnk", links, true)
+        {
+        }
+    }
+    class SystemLinkAdapter : LinkAdapter
+    {
+        public SystemLinkAdapter (LinkSet links)
+            : base(Environment.SystemDirectory, "*.exe", links, false)            
+        {
+        }
+    }
+    class CurrentDirLinkAdapter : LinkAdapter
+    {
+        public CurrentDirLinkAdapter(LinkSet links)
+            : base(Environment.CurrentDirectory, "*.exe", links,false)
+        {
+        }
+    }
+    class LinkAdapter
     {
         FileSystemWatcher watcher = new FileSystemWatcher();
         public string Dir;
         public string Ext;
-        public RunDir(string dir, string ext,RunLinks links)
+        public bool Rescure = false;
+        public LinkAdapter(string dir, string ext,LinkSet links,bool rescure)
         {
             Dir = dir;
             Ext = ext;
-            Links = links;
-            watcher.Path = dir ;
+            RunLinks = links;
+            Rescure = rescure;
+            MakeLinks();
+            WatchChange(dir, ext);
+        }
+
+        private void WatchChange(string dir, string ext)
+        {
+            // 监视这个目录的变化
+            watcher.Path = dir;
             watcher.IncludeSubdirectories = true;
             watcher.Filter = ext;
-            /* Watch for changes in LastAccess and LastWrite times, and
-               the renaming of files or directories. */
             watcher.NotifyFilter = //NotifyFilters.LastAccess | NotifyFilters.LastWrite|
                 NotifyFilters.FileName | NotifyFilters.DirectoryName;
-
-            // Add event handlers.
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.Created += new FileSystemEventHandler(OnChanged);
             watcher.Deleted += new FileSystemEventHandler(OnChanged);
             watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
-            // Begin watching.
             watcher.EnableRaisingEvents = true;
         }
-        RunLinks Links = null;
-        // Define the event handlers.
+
+        private  void MakeLinks()
+        {
+            // 搜索这个目录，构建搜索池            
+            SearchOption so = SearchOption.TopDirectoryOnly;
+            if (Rescure)
+                so = SearchOption.AllDirectories;
+            DirectoryInfo di = new DirectoryInfo(Dir);
+            FileInfo[] rgFiles = di.GetFiles(Ext, so);
+            RunLinks.Fill(rgFiles);
+        }
+        LinkSet RunLinks = null;
         private void OnChanged(object source, FileSystemEventArgs e)
         {
-            //MessageBox.Show("change" + e.FullPath+e.Name+e.ChangeType.ToString());
-            Links.Populate();
+            MakeLinks();
         }
 
         private void OnRenamed(object source, RenamedEventArgs e)
         {
-            Links.Populate();
+            MakeLinks();
         }
 
     }
-    class RunLink
+    class Link
     {
         private string fileName = "";
 
@@ -150,13 +263,13 @@ namespace runplus
             get { return fullFileName; }
             set { fullFileName = value; }
         }
-        public RunLink(string filename,string fullfilename)
+        public Link(string filename,string fullfilename)
         {
             fileName = filename;
             fullFileName = fullfilename;
         }
     }
-    class KeyRunLink : RunLink
+    class KeyLink : Link
     {
         private string keyName = "";
 
@@ -165,7 +278,7 @@ namespace runplus
             get { return keyName; }
             set { keyName = value; }
         }
-        public KeyRunLink(string keyname,string filename, string fullfilename):base(filename,fullfilename)
+        public KeyLink(string keyname,string filename, string fullfilename):base(filename,fullfilename)
         {
             keyName = keyname;
         }
