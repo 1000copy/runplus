@@ -1,1 +1,0 @@
-2009/9/6 10:12:26: Everything 1.2.1.371: d:\dev\everything\src\mu.h(1094): mu::ShellExecuteExUTF8_idlist(): ShellExecuteExW(): GetLastError(): 3: failed to execute
