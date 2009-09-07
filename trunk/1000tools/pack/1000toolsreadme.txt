@@ -8,6 +8,8 @@ Create by Easycmd .
 4. http://ostatic.com/
 5. http://alternativeto.net
    Find alternatives to Windows applications  
+
+
 1. 2009年9月7日 keynote-nt 
 来自 http://code.google.com/p/keynote-nf/
 定制方法：
@@ -15,4 +17,5 @@ There is no installation project at this moment. You can copy all the files in a
 keynote.exe, keynote.chm, keynote.tip, keynote.lan, doc\* lang\* 
 老的keynote现在更新太慢，并且在全选的时候会直接报错并退出。
 
-
+2. free download manager 
+  orbit downlaod也不错，但是习惯提示更新，太频繁，让人反感。
