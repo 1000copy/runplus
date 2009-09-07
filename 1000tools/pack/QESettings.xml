@@ -2,15 +2,15 @@
 <DSSettings xmlns="http://tempuri.org/DSSettings.xsd">
   <settings>
     <ConnectionPage>0</ConnectionPage>
-    <SqlServer>.</SqlServer>
+    <SqlServer>.\sqlexpress</SqlServer>
     <SqlDatabase>master</SqlDatabase>
-    <SqlTrusted>true</SqlTrusted>
-    <SqlLoginName />
+    <SqlTrusted>false</SqlTrusted>
+    <SqlLoginName>sa</SqlLoginName>
     <OleDbConnect />
     <OraDataSource />
     <OraLoginName />
     <OraMSDriver>false</OraMSDriver>
-    <MdiParentMaximized>false</MdiParentMaximized>
+    <MdiParentMaximized>true</MdiParentMaximized>
     <MdiChildMaximized>false</MdiChildMaximized>
   </settings>
 </DSSettings>
